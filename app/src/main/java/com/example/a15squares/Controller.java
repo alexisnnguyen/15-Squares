@@ -1,8 +1,9 @@
 package com.example.a15squares;
 
+import android.widget.Button;
 import android.widget.SeekBar;
 
-public class Controller implements SeekBar.OnSeekBarChangeListener{
+public class Controller implements SeekBar.OnSeekBarChangeListener, View.OnClickListener{
 
     private View initView;
     private Model initModel;
@@ -21,4 +22,9 @@ public class Controller implements SeekBar.OnSeekBarChangeListener{
     }
     public void onStartTrackingTouch(SeekBar seekBar) {}
     public void onStopTrackingTouch(SeekBar seekBar) {}
+    @Override
+    public void onClick(android.view.View view) {
+        initView.invalidate();
+    }
+
 }

@@ -3,6 +3,7 @@ package com.example.a15squares;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.SeekBar;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,6 +19,11 @@ public class MainActivity extends AppCompatActivity {
 
         SeekBar seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(controller);
+
+        Button resetButton = findViewById(R.id.resetButton);
+        resetButton.setOnClickListener(controller);
+
+
 
     }
 }

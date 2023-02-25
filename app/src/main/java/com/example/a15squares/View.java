@@ -18,8 +18,6 @@ public class View extends SurfaceView{
     public Model getModel() {
         return model;
     }
-    public int [] array = new int[model.seed];
-
 
 
     public View(Context context, AttributeSet attrs) {
@@ -39,6 +37,7 @@ public class View extends SurfaceView{
     public void resetBoard() {
 
         //Random array
+        int [] array = new int[model.seed];
         Random rand = new Random();
 
         for (int i = 1; i < model.seed; i++) {
