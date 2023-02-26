@@ -7,17 +7,22 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 import java.util.Random;
+import java.util.Arrays;
 
 public class View extends SurfaceView{
 
     Paint squares = new Paint();
     Paint border = new Paint();
     Paint number = new Paint();
+    Random rand = new Random();
 
-    private Model model = new Model();
+    private final Model model = new Model();
     public Model getModel() {
         return model;
     }
+
+
+
 
 
     public View(Context context, AttributeSet attrs) {
@@ -34,15 +39,48 @@ public class View extends SurfaceView{
 
     }
 
-    public void resetBoard() {
+    public void isSolved() {
 
-        //Random array
         int [] array = new int[model.seed];
-        Random rand = new Random();
+        int [] solution = new int [model.seed];
+        boolean same = false;
 
         for (int i = 1; i < model.seed; i++) {
             array[i-1] = i;
         }
+        array[model.seed-1] = 0;
+
+        int count = 0;
+        for (int row = 0; row < model.numSquares-1; row++) {
+            for ( int col = 0; col < model.numSquares-1; col++) {
+                solution[count] = model.board[col][row];
+                count++;
+            }
+        }
+
+        for (int i = 0; i < model.seed; i++) {
+            if (solution[i] != array[i]) {
+                same = false;
+                break;
+            }
+            same = true;
+        }
+
+        if (same) {
+            border.setColor(Color.GREEN);
+        }
+
+    }
+
+    public void resetBoard() {
+
+        //Random array
+        int [] array = new int[model.seed];
+
+        for (int i = 1; i < model.seed; i++) {
+            array[i-1] = i;
+        }
+
         array[model.seed-1] = 0;
 
         //Shuffle
@@ -54,6 +92,7 @@ public class View extends SurfaceView{
             array[randIndex] = temp;
         }
 
+
         int count = 0;
         for (int row = 0; row < model.numSquares-1; row++) {
             for ( int col = 0; col < model.numSquares-1; col++) {
@@ -62,16 +101,45 @@ public class View extends SurfaceView{
             }
         }
 
+        model.blankX = model.numSquares-2;
+        model.blankY = model.numSquares-2;
+
+    }
+
+    public void swap(){
+        //The swap of values
+        int temp = model.board[(int) model.squareX][(int) model.squareY];
+        model.board[(int) model.squareX][(int) model.squareY] = 0;
+        model.board[(int) model.blankX][(int) model.blankY] = temp;
+
+        //Change blanks to new square
+        model.blankX = model.squareX;
+        model.blankY = model.squareY;
     }
 
     public void onDraw(Canvas canvas) {
 
         float borderWidth = 10.0f;
         float numSquares = model.numSquares;
-        float backWidth = canvas.getWidth();
-        float backHeight = canvas.getWidth();
-        float squareSize = (canvas.getWidth()-(borderWidth*numSquares))/(numSquares-1);
+        float backWidth = getWidth();
+        float backHeight = getWidth();
+        float squareSize = (getWidth()-(borderWidth*numSquares))/(numSquares-1);
         number.setTextSize(300/numSquares);
+
+        //Reset the board
+        if (model.resetTouched) {
+            resetBoard();
+            model.resetTouched = false;
+        }
+
+        if (model.isBlank && model.isNextTo) {
+            swap();
+            model.isBlank = false;
+            model.isNextTo = false;
+        }
+
+        //Changes background to green if the board is solved
+        isSolved();
 
         //Draws the background
         canvas.drawRect(0, 0, backWidth, backHeight, border);
@@ -84,19 +152,15 @@ public class View extends SurfaceView{
             }
         }
 
-        //Reset the board
-        resetBoard();
-
         //Draws the numbers
         for (int i = 1; i < numSquares; i++) {
             for (int j = 1; j < numSquares; j++) {
-                if (i != numSquares-1 || j != numSquares-1) {
+                if (model.board[i-1][j-1] != 0) {
                     canvas.drawText(String.valueOf(model.board[i-1][j-1]), borderWidth * i + squareSize / numSquares + squareSize * (i - 1),
                             borderWidth * j + squareSize * 2 / 3 + squareSize * (j - 1), number);
                 }
             }
         }
-
 
     }
 }

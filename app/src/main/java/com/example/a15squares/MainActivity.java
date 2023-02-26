@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         Button resetButton = findViewById(R.id.resetButton);
         resetButton.setOnClickListener(controller);
 
+        view.setOnTouchListener((android.view.View.OnTouchListener) controller);
 
 
     }
